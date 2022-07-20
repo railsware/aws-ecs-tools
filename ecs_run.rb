@@ -124,7 +124,10 @@ log_client = nil
 log_stream_name = nil
 log_token = nil
 if log_configuration.log_driver == 'awslogs'
-  log_client = Aws::CloudWatchLogs::Client.new
+  client_opts = {}
+  client_opts[:region] = config[:region] if config[:region]
+  client_opts[:credentials] = Aws::SharedCredentials.new(profile_name: config[:profile]) if config[:profile]
+  log_client = Aws::CloudWatchLogs::Client.new(client_opts)
   log_stream_name = "#{log_configuration.options['awslogs-stream-prefix']}/#{container_name}/#{task_id}"
   log_token = nil
 else
