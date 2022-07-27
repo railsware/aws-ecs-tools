@@ -17,20 +17,24 @@ OptionParser.new do |opts|
     config[:service] = s
   end
 
-  opts.on('-C', '--container=CONTAINER', 'Container name') do |s|
-    config[:container] = s
+  opts.on('-C', '--container=CONTAINER', 'Container name') do |c|
+    config[:container] = c
   end
 
-  opts.on('-w', '--watch', 'Watch output') do |s|
+  opts.on('-w', '--watch', 'Watch output') do
     config[:watch] = true
   end
 
-  opts.on('-r', '--ruby', 'Run input as Ruby code with Rails runner (instead of shell command)') do |r|
+  opts.on('-r', '--ruby', 'Run input as Ruby code with Rails runner (instead of shell command)') do
     config[:ruby] = true
   end
 
   opts.on('-R', '--region=REGION', 'Aws region') do |r|
     config[:region] = r
+  end
+
+  opts.on('-P', '--profile=PROFILE', 'Credentials profile name') do |p|
+    config[:profile] = p
   end
 end.parse!
 raise OptionParser::MissingArgument, 'cluster' if config[:cluster].nil?
@@ -48,6 +52,8 @@ command = "bundle exec rails runner #{command.shellescape}" if config[:ruby]
 
 client_opts = {}
 client_opts[:region] = config[:region] if config[:region]
+client_opts[:credentials] = Aws::SharedCredentials.new(profile_name: config[:profile]) if config[:profile]
+
 client = Aws::ECS::Client.new(client_opts)
 unless client_opts[:region]
   puts "No region is specified. Using #{client.config.region}"
@@ -119,7 +125,7 @@ log_client = nil
 log_stream_name = nil
 log_token = nil
 if log_configuration.log_driver == 'awslogs'
-  log_client = Aws::CloudWatchLogs::Client.new
+  log_client = Aws::CloudWatchLogs::Client.new(client_opts)
   log_stream_name = "#{log_configuration.options['awslogs-stream-prefix']}/#{container_name}/#{task_id}"
   log_token = nil
 else
