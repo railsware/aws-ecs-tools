@@ -9,7 +9,7 @@ A tool to sync up AWS Systems Manager Parameter Store with a local YAML file.
 WIP; TODO a prettier name.
 
 ```
-Usage: param_tool.rb [options] (down|up)
+Usage: AWS_REGION=<your_region> param_tool.rb [options] (down|up)
     -f, --file=FILE                  File with params
     -p, --prefix=PREFIX              Param prefix
     -k, --key=KEY                    Encryption key for writing secure params (no effect on reading)
@@ -20,7 +20,7 @@ Usage: param_tool.rb [options] (down|up)
 ### Download params
 
 ```sh
-param_tool.rb --prefix /staging/myapp down >params.yml
+AWS_REGION=eu-central-1 param_tool.rb --prefix /staging/myapp down >params.yml
 ```
 
 - Secure (encrypted) param values are replaced with `SECURE` - NOT decrypted.
@@ -32,7 +32,7 @@ param_tool.rb --prefix /staging/myapp down >params.yml
 
 ```sh
 # see planned changes, confirm, apply:
-param_tool.rb --prefix /staging/myapp --file params.yml up
+AWS_REGION=eu-central-1 param_tool.rb --prefix /staging/myapp --file params.yml up
 
 Planned changes:
 create /staging/myapp/host = "app.com"
@@ -48,7 +48,7 @@ All done!
 my_param_generating_script.sh | param_tool.rb --prefix /staging/myapp --yes up
 
 # specify a key to do the encryption:
-param_tool.rb --key alias/mailtrap-parameter-store --prefix /staging/myapp --file params.yml up
+AWS_REGION=eu-central-1 param_tool.rb --key alias/mailtrap-parameter-store --prefix /staging/myapp --file params.yml up
 ```
 
 - params that are not changed will not be updated
@@ -156,7 +156,7 @@ Type your command then press Ctrl+D
 Note - Ruby evaluation result is NOT automatically printed, use `p`
 User.where("email LIKE '%@myapp.com'").update_all(role: 'admin')
 ^D
-Task started. See it online at https://us-east-1.console.aws.amazon.com/ecs/home?region=us-east-1#/clusters/mailtrap/tasks/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/details
+Task started. See it online at https://eu-central-1.console.aws.amazon.com/ecs/home?region=eu-central-1#/clusters/mailtrap/tasks/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/details
 Watching task output. Note - Ctrl+C will stop watching, but will NOT stop the task!
 [2020-07-25 08:42:01 +0300] Task status changed to PROVISIONING
 [2020-07-25 08:42:23 +0300] Task status changed to PENDING
