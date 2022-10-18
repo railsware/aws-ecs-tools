@@ -206,12 +206,14 @@ elsif ARGV[0] == 'up'
     exit(1)
   end
 
-  print 'Apply? (anything but "yes" will abort): '
-  answer = $stdin.gets.chomp
+  unless config[:yes]
+    print 'Apply? (anything but "yes" will abort): '
+    answer = $stdin.gets.chomp
 
-  if answer != 'yes'
-    puts 'Operation aborted. No changes were made.'
-    exit(1)
+    if answer != 'yes'
+      puts 'Operation aborted. No changes were made.'
+      exit(1)
+    end
   end
 
   apply_write_plan(config, client, plan)
