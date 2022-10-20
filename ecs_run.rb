@@ -82,7 +82,16 @@ end
 
 raise 'No container found.' unless container_name
 
-vpc_config = service.deployments[0].network_configuration.awsvpc_configuration
+network_configuration_source =
+  if service.deployments.length.positive?
+    service.deployments[0]
+  elsif service.task_sets.length.positive?
+    service.task_sets[0]
+  else
+    raise 'service has no deployments nor task sets, cannot determine network configuration'
+  end
+
+vpc_config = network_configuration_source.network_configuration.awsvpc_configuration
 
 subnet = vpc_config.subnets[0]
 security_group = vpc_config.security_groups[0]
