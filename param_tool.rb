@@ -66,6 +66,9 @@ def build_write_params_plan(client, config, old_param_tree, keypath, value)
     value.each.with_index.flat_map do |child, index|
       build_write_params_plan(client, config, old_param_tree, keypath + [index], child)
     end
+  elsif value.nil?
+    # skip params without value set
+    []
   else
     secure = false
 
@@ -81,8 +84,9 @@ def build_write_params_plan(client, config, old_param_tree, keypath, value)
 
     key_name = config[:prefix] + keypath.join('/')
 
+    old_value = old_param_tree.dig(*keypath)
+
     if value == DELETE_MARKER
-      old_value = old_param_tree.dig(*keypath)
       return [] if old_value.nil?
 
       return [{ name: key_name, operation: :delete }]
@@ -90,11 +94,8 @@ def build_write_params_plan(client, config, old_param_tree, keypath, value)
 
     string_value = value.to_s
 
-    old_value = old_param_tree.dig(*keypath)
-    if old_value == string_value
-      # skip params with no change
-      return []
-    end
+    # skip params with no change
+    return [] if old_value == string_value
 
     [{
       name: key_name,
