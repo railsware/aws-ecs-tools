@@ -34,6 +34,10 @@ OptionParser.new do |opts|
   opts.on("-y", "--yes", "Apply changes without asking for confirmation (DANGER)") do
     config[:yes] = true
   end
+
+  opts.on("-D", "--description=STRING", "Add description to params") do |k|
+    config[:description] = k
+  end
 end.parse!
 raise OptionParser::MissingArgument, 'prefix' if config[:prefix].nil?
 
@@ -140,7 +144,9 @@ def apply_write_plan(config, client, plan)
           value: item[:value],
           type: item[:secure] ? 'SecureString' : 'String',
           key_id: item[:secure] ? config[:key] : nil,
-          overwrite: item[:operation] == :update
+          overwrite: item[:operation] == :update,
+          tier: 'Intelligent-Tiering',
+          description: config[:description]
         )
         puts 'done'
       end
