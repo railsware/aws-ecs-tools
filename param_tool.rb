@@ -188,9 +188,9 @@ elsif ARGV[0] == 'up'
   new_param_tree =
     begin
       if config[:file]
-        File.open(config[:file]) { |f| YAML.safe_load(f.read) }
+        File.open(config[:file]) { |f| YAML.safe_load(f.read, aliases: true) }
       else
-        YAML.safe_load(STDIN.read)
+        YAML.safe_load(STDIN.read, aliases: true)
       end
     rescue StandardError => e
       raise "Failed to read params YAML: #{e}"
