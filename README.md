@@ -15,6 +15,7 @@ Usage: AWS_REGION=<your_region> param_tool.rb [options] (down|up)
     -k, --key=KEY                    Encryption key for writing secure params (no effect on reading)
     -d, --decrypt                    Output decrypted params
     -y, --yes                        Apply changes without asking for confirmation (DANGER)
+    -D, --description=STRING         Add description to params
 ```
 
 ### Download params
