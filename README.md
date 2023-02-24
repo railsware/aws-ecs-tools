@@ -149,7 +149,7 @@ ecs_run.rb -c app -s app --ruby 'p User.first'
 
 This way you get Rails log output, but note that, unlike a Rails console, you don't see command evaluation results by default - you need to print it explicitly.
 
-### Example
+#### Example
 
 ```sh
 $ ruby ecs_run.rb --cluster myapp --service myapp --watch --ruby
@@ -165,4 +165,27 @@ Watching task output. Note - Ctrl+C will stop watching, but will NOT stop the ta
 [2020-07-25 08:43:42 +0300] I, [2020-07-25T05:43:37.853603 #7]  INFO -- : Raven 3.0.0 ready to catch errors
 [2020-07-25 08:44:01 +0300] Task status changed to DEPROVISIONING
 [2020-07-25 08:44:14 +0300] Task status changed to STOPPED
+```
+
+### Use AWS credentials from 1Password
+
+In order to make AWS credentials usage more secure it is recommended to store them in 1Password, setup 1Password CLI and AWS plugin
+
+Store your AWS Access Key to `Private` 1Password vault under `AWS Access Key myapp`, fields `access key id` and `secret access key` (same format as the [1Password AWS plugin](https://developer.1password.com/docs/cli/shell-plugins/aws/), so you can reuse the item for the plugin as well.)
+
+Then `.env` file could look like
+
+```
+AWS_ACCESS_KEY_ID='op://Private/AWS Access Key myapp/access key id'
+AWS_SECRET_ACCESS_KEY='op://Private/AWS Access Key myapp/secret access key'
+```
+
+See [instruction](https://developer.1password.com/docs/cli/secrets-environment-variables) on how to load 1Passwords secret to env
+
+#### Example
+
+```sh
+$ op run --env-file=.env -- ruby ecs_run.rb --cluster mycluster --service myservice --container mycontainer --region --eu-central-1 --ruby "pp 'Hello'"
+
+Task started. See it online at https://eu-central-1.console.aws.amazon.com/ecs/home?region=eu-central-1#/clusters/sandbox-mailtrap/tasks/xxxxxxxxxxxxxxxxxxxxxxxxx/details
 ```
