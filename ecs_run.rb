@@ -114,7 +114,8 @@ task_response = client.run_task(
       security_groups: [security_group],
       assign_public_ip: 'ENABLED'
     }
-  }
+  },
+  started_by: 'aws_ecs_tools/ecs_run'
 )
 
 task_arn = task_response.tasks[0].task_arn
