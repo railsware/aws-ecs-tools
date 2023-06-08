@@ -36,6 +36,10 @@ OptionParser.new do |opts|
   opts.on('-P', '--profile=PROFILE', 'Credentials profile name') do |p|
     config[:profile] = p
   end
+
+  opts.on('--process-profile=PROFILE', '`credential_process` profile name') do |p|
+    config[:process_profile] = p
+  end
 end.parse!
 raise OptionParser::MissingArgument, 'cluster' if config[:cluster].nil?
 raise OptionParser::MissingArgument, 'service' if config[:service].nil?
@@ -53,6 +57,11 @@ command = "bundle exec rails runner #{command.shellescape}" if config[:ruby]
 client_opts = {}
 client_opts[:region] = config[:region] if config[:region]
 client_opts[:credentials] = Aws::SharedCredentials.new(profile_name: config[:profile]) if config[:profile]
+if config[:process_profile]
+  process = Aws::SharedConfig.new(config_enabled: true, profile_name: config[:process_profile]).credential_process
+  raise "Can't find `credential_process` for specified profile '#{config[:process_profile]}'" unless process
+  client_opts[:credentials] = Aws::ProcessCredentials.new(process)
+end
 
 client = Aws::ECS::Client.new(client_opts)
 unless client_opts[:region]
