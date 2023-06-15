@@ -149,6 +149,22 @@ ecs_run.rb -c app -s app --ruby 'p User.first'
 
 This way you get Rails log output, but note that, unlike a Rails console, you don't see command evaluation results by default - you need to print it explicitly.
 
+### Sourcing credentials with 1Password
+
+Include `credential_process` in the config file:
+
+```
+# ~/.aws/config
+[profile dev]
+credential_process = sh -c "op item get 'AWS Access Key' --fields label='Access Key ID',label='Secret Access Key' --format json | jq 'map(.value) | {Version:1, AccessKeyId:.[0], SecretAccessKey: .[1]}'"
+```
+
+Now run the command with `--process-profile` option:
+
+```bash
+ecs_run.rb --process-profile dev -c app -s app -R us-east-1
+```
+
 ### Example
 
 ```sh
