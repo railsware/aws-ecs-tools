@@ -70,7 +70,7 @@ def build_write_params_plan(client, config, old_param_tree, keypath, value)
     value.each.with_index.flat_map do |child, index|
       build_write_params_plan(client, config, old_param_tree, keypath + [index], child)
     end
-  elsif value.nil?
+  elsif value.nil? || value == ''
     # skip params without value set
     []
   else
