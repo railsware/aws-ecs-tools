@@ -92,7 +92,7 @@ end
 raise 'No container found.' unless container_name
 
 network_configuration_source =
-  if service.deployments.length.positive?
+  if service.deployments&.length.to_i.positive?
     service.deployments[0]
   elsif service.task_sets.length.positive?
     service.task_sets[0]
